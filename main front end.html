@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Code Challenge</title>
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<!-- jQuery -->
+<!--<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>-->
+<!-- jQuery Configuration -->
+<script type="text/javascript" src="js/script.js"></script>   
+</head>
+
+<body>
+
+<style>
+	body {
+		background-color: white;
+	}
+	.template_row {
+		background-color: white;
+		padding-top: 10px;
+		padding-bottom: 10px;
+	}
+	table tr th {
+		text-align: left;
+		padding-top: 10px;
+		padding-bottom: 10px;
+	}
+	thead {
+		background-color: grey;
+	}
+	table {
+		border: none;
+		border-collapse: collapse;
+	}
+	.popup {
+		margin-top: 20px;
+		background-color: green;
+		width: 200px;
+		padding: 1px 50px 1px 50px;
+		border-radius: 10px;
+	}
+	.action_btn {
+		position: relative;
+		width: 300px;
+		margin-left: 30%;
+	}
+	.submit {
+		background-color: black;
+		color: white;
+		border: 1px solid black;
+		padding: 3px 15px 3px 15px;
+		width: 80px;
+		margin-left:50px;
+		margin-right :3px;
+	}
+	.cancel {
+		background-color: grey;
+		color: white;
+		border: 1px solid grey;
+		padding: 3px 15px 3px 15px;
+		margin-left :3px;
+		width: 80px;
+	}
+
+	.controls {
+		width: 10px;
+		position: relative;
+		background-color: grey;
+	}
+
+	.controls a {
+		position: absolute;
+		top: 0px;
+		width: 80%;
+	}
+
+	.list_cancel {
+	   width: 100px;
+	   height: 100px;
+	   position: relative;
+	  transform:rotate(45deg);
+	-ms-transform:rotate(45deg); /* IE 9 */
+	-webkit-transform:rotate(45deg); /* Safari and Chrome */
+	}
+
+	.list_cancel:before, .list_cancel:after {
+	  content: "";
+	  position: absolute;
+	  z-index: -1;
+	  background: white;
+	}
+
+	.list_cancel:before {
+	  left: 50%;
+	  top: 15px;
+	  left: -12px;
+	  width: 10%;
+	  margin-left: -15%;
+	  height: 10%;
+	}
+
+	.list_cancel:after {
+	  top: 15px;
+	  left: -15px;
+	  height: 10%;
+	  margin-right: 15px;
+	  width: 10%;
+	  transform:rotate(90deg);
+	  -ms-transform:rotate(90deg); /* IE 9 */
+	  -webkit-transform:rotate(90deg); /* Safari and Chrome */
+	}
+	.list_add {
+		position: relative;
+		margin-top: 50px;
+		top: 10px;
+	}
+
+	.common_table tr th:nth:child(1) { width: 20px; }
+
+	th { width: 250px; }
+	.data_col { width: 250px; }
+	.short_col { width: 50px; }
+	.btn_col { width: 20px; }
+
+	.action_btn { cursor: pointer; }
+	select { cursor: pointer; }
+
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script>
+
+	$(document).ready(function(){
+		$(".template_row:first").hide();
+		$(".popup").hide();
+		function fadeAway() {
+			$(".popup").hide()
+		}
+
+		// Upon clicking on the "Submit" button
+		// hide all the list_cancel buttons except the first one.
+		$(".submit").click(function(){
+			$(".popup").show();
+			setTimeout( fadeAway , 5000 );
+			$(".list_cancel").hide();
+			$(".list_cancel:first").show();
+		});
+
+		// Upon clicking on the "Cancel" button
+		// Remove all the rows that does not hide its "list_cancel" buttons.
+		$(".cancel").click(function(){
+
+			i=1;
+			var listOfCancelButton = document.getElementsByClassName("list_cancel");
+
+			// Loop through all the list_cancel buttons from the end excluding the first one.
+			for( var j=listOfCancelButton.length-1 ; j>0 ; j-- ) {
+				// If the "list_cancel" button is not hidden , delete its row.
+				if( listOfCancelButton[j].style.display != "none" ) {
+					document.getElementsByClassName("common_table")[0].deleteRow(j+1);
+				}
+			}
+
+		});
+	
+		// Action based on the "Add" button being clicked
+		$(".list_add").click(function(){
+
+			// Show the first row briefly in order to clone it
+			$(".template_row:first").show();
+
+			// Clone the first row and insert it to the table
+			var newel = $('.template_row:first').clone();
+			$(newel).insertAfter(".template_row:last");
+
+			// Hide the first row now that the cloning is done
+			$(".template_row:first").hide();
+
+			// If the number of row is greater than '1', hide the "no_entries_row"
+			if( $(".template_row").length > 1 ) {
+				$(".no_entries_row").hide();
+			}
+		});
+
+		// Select the colors based on the choice
+		$("select").on( 'click' , function(event) {
+			$( "select option:selected" ).each(function( index ) {
+				var text = $( this ).text();
+				var color = "yellow"
+				if( text == "Success" ) color = "blue";
+				if( text == "Wrong" ) color = "red";
+				if( text == "Error" ) color = "green";
+				$(this).parent().css("background-color", color )
+				if( text == "Error" || text == "" )
+					$(this).parent().css("color", "white" )
+			});
+		}).change();
+
+		function swapImages () {
+			// Select the colors based on the choice
+			$( "select option:selected" ).each(function( index ) {
+				var text = $( this ).text();
+				var color = "yellow"
+				if( text == "Success" ) color = "green";
+				if( text == "Wrong" ) color = "red";
+				if( text == "Error" ) color = "orange";
+				$(this).parent().css("background-color", color )
+			});
+		}
+		setInterval(swapImages,20);
+
+		// Action on the list_cancel button ( Cross on the left-most column of the table )
+		$("tbody").on('click', '.list_cancel', function () {
+			// Remove the row on click
+			if( $(".template_row").length > 1 ) {
+				$(this).closest('tr').remove();
+			}
+			
+			// If the number of rows is 1 , show the "no_entries_row" class.
+			if( $(".template_row").length == 1 ) {
+				$(".no_entries_row").show();
+			}
+		});
+	});
+
+
+</script>
+
+<div class="wrapper">
+	
+            <table class="common_table">
+          
+            <thead>
+            <tr>
+            	<th class="btn_col"><img src="images/add_remove.png" /></th>
+            	<th class="code_col">Product Code</th>
+            	<th>Product Name</th>
+            	<th class="data_col">Stock</th>
+            	<th class="data_col">Vendor</th>
+            	<th class="short_col">Status</th>
+            	<th class="data_col">Client</th>
+            </tr>
+            </thead>
+            <tbody>
+            
+         
+            
+            <tr class="template_row">
+            	<td class="controls"><a href="#" class="list_cancel" title="Delete Row">&nbsp;</a></td>
+                <td><input type="text" class="" id="productcode" name="" value=""/></td>
+                <td><input type="text" class="long" id="productname" name="" value=""/></td>
+
+                <td><input type="text" class="" id="stock" name="" value=""/></td>
+                <td><input type="text" class="" id="vendor" name="" value=""/></td>
+                <td>
+
+                    <select name="" id="" class="label">
+
+                        <option value = ""></option>
+                        <option value = "green" style="background-color: green;">Success</option>
+                        <option value = "red" style="background-color: red;">Wrong</option>
+                        <option value = "orange" style="background-color: orange;">Error</option>
+                    </select>
+                </td>
+                <td><input type="text" class="" id="client" name="" value=""/></td>
+            </tr>
+			<tr class="no_entries_row">
+            	<td colspan="7">No Entries</td>
+            </tr>
+
+
+            </tbody>
+            </table>
+            
+        	<a href="#" class="list_add">Add one row</a>
+            
+            <br class="clear" />
+            
+            <!-- ############# save controls start ############# -->
+            <div class="action_btn">
+                <input name="submit" class="action_btn submit" type="submit" value="Save"/>
+                <input name="submit" class="action_btn cancel" type="submit" value="Cancel"/>
+                <div class="popup">
+                    <p>Saved successfully!</p>
+                </div>
+            </div>
+            <!-- ############# save controls End ############# -->
+             
+        </div>
+        
+      
+</div>
+<!-- ############# wrapper end ############# -->
+</body>
+</html>
